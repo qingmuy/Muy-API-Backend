@@ -1,7 +1,9 @@
 package com.qingmuy.service;
 
-import com.qingmuy.model.entity.InterfaceInfo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
+import com.qingmuy.model.entity.InterfaceInfo;
 
 /**
 * @author Muy
@@ -9,5 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-08-22 22:54:15
 */
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
-
+    QueryWrapper<InterfaceInfo> getQueryWrapper(InterfaceInfoQueryRequest queryRequest);
 }

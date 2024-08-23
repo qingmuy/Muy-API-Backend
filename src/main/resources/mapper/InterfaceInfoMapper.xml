@@ -22,7 +22,7 @@
     <sql id="Base_Column_List">
         id,name,description,
         url,requestHeader,responseHeader,
-        stratus,method,userId,
+        status,method,createUser,
         createTime,updateTime,isDelete
     </sql>
 </mapper>

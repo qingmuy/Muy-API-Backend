@@ -1,11 +1,12 @@
 package com.qingmuy.model.dto.interfaceinfo;
 
+import com.qingmuy.common.PageRequest;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class InterfaceInfoQueryRequest implements Serializable {
+public class InterfaceInfoQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
@@ -28,6 +29,11 @@ public class InterfaceInfoQueryRequest implements Serializable {
     private String url;
 
     /**
+     * 请求参数
+     */
+    private String requestParams;
+
+    /**
      * 请求头
      */
     private String requestHeader;
@@ -40,7 +46,7 @@ public class InterfaceInfoQueryRequest implements Serializable {
     /**
      * 接口状态：0-关闭，1-开启
      */
-    private Integer stratus;
+    private Integer status;
 
     /**
      * 请求类型
@@ -50,6 +56,6 @@ public class InterfaceInfoQueryRequest implements Serializable {
     /**
      * 创建人
      */
-    private Long userId;
+    private Long createUser;
 
 }

@@ -4,9 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 接口信息
@@ -49,7 +50,7 @@ public class InterfaceInfo implements Serializable {
     /**
      * 接口状态：0-关闭，1-开启
      */
-    private Integer stratus;
+    private Integer status;
 
     /**
      * 请求类型
@@ -59,7 +60,7 @@ public class InterfaceInfo implements Serializable {
     /**
      * 创建人
      */
-    private Long userId;
+    private Long createUser;
 
     /**
      * 创建时间

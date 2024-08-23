@@ -9,6 +9,7 @@ import com.qingmuy.common.ErrorCode;
 import com.qingmuy.common.ResultUtils;
 import com.qingmuy.exception.BusinessException;
 import com.qingmuy.exception.ThrowUtils;
+import com.qingmuy.mapper.InterfaceInfoMapper;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
@@ -33,6 +34,9 @@ public class InterfaceInfoController {
     @Resource
     private InterfaceInfoService interfaceInfoService;
 
+    @Resource
+    InterfaceInfoMapper interfaceInfoMapper;
+
     /**
      * 创建接口
      * @param interfaceInfoAddRequest 接口信息
@@ -49,7 +53,7 @@ public class InterfaceInfoController {
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         BeanUtil.copyProperties(interfaceInfoAddRequest, interfaceInfo);
         User loginUser = userService.getLoginUser(request);
-        interfaceInfo.setUserId(loginUser.getId());
+        interfaceInfo.setCreateUser(loginUser.getId());
         interfaceInfoService.save(interfaceInfo);
         return ResultUtils.success("添加成功");
     }
@@ -84,7 +88,7 @@ public class InterfaceInfoController {
         BeanUtil.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         // 仅本人或管理员可修改
         User user = userService.getLoginUser(request);
-        if (!interfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!interfaceInfo.getCreateUser().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
@@ -96,13 +100,11 @@ public class InterfaceInfoController {
     @PostMapping("/list")
     public BaseResponse<Page<InterfaceInfo>> listInterface(@RequestBody InterfaceInfoQueryRequest queryRequest) {
         // 逻辑处理
-
-        /*long current = queryRequest.getCurrent();
+        long current = queryRequest.getCurrent();
         long size = queryRequest.getPageSize();
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size),
                 interfaceInfoService.getQueryWrapper(queryRequest));
-        return ResultUtils.success(interfaceInfoPage);*/
-        return ResultUtils.success(new Page<>());
+        return ResultUtils.success(interfaceInfoPage);
     }
 
     /**
