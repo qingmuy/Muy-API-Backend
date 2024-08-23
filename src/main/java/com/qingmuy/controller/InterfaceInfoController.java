@@ -9,7 +9,6 @@ import com.qingmuy.common.ErrorCode;
 import com.qingmuy.common.ResultUtils;
 import com.qingmuy.exception.BusinessException;
 import com.qingmuy.exception.ThrowUtils;
-import com.qingmuy.mapper.InterfaceInfoMapper;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
@@ -33,9 +32,6 @@ public class InterfaceInfoController {
 
     @Resource
     private InterfaceInfoService interfaceInfoService;
-
-    @Resource
-    InterfaceInfoMapper interfaceInfoMapper;
 
     /**
      * 创建接口
