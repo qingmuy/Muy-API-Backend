@@ -16,6 +16,6 @@
 
     <sql id="Base_Column_List">
         id,userName,userAvatar,userProfile,
-        userRole,createTime,updateTime,isDelete
+        userRole,accessKey,secretKey,createTime,updateTime,isDelete
     </sql>
 </mapper>
