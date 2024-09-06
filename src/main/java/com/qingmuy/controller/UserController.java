@@ -38,6 +38,8 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    //TODO ： 用户更换ak sk
+
 
     /**
      * 用户注册

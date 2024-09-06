@@ -2,11 +2,13 @@ package com.qingmuy.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.qingmuy.annotation.AuthCheck;
 import com.qingmuy.common.*;
 import com.qingmuy.exception.BusinessException;
 import com.qingmuy.exception.ThrowUtils;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.qingmuy.model.entity.InterfaceInfo;
@@ -195,6 +197,43 @@ public class InterfaceInfoController {
         interfaceInfo.setId(id);
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
         boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 测试接口
+     *
+     * @param interfaceInfoInvokeRequest 接口信息
+     * @param request
+     * @return
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterface(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                  HttpServletRequest request) {
+        // 判断请求信息是否合法
+        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        // 判断接口是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (oldInterfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+        }
+        // 获取当前登录用户
+        User loginUser = userService.getLoginUser(request);
+        // TODO： 从数据库校验ak，sk
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        MuyApiClient apiClient = new MuyApiClient(accessKey, secretKey);
+        Gson gson = new Gson();
+        com.qingmuy.muyapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.qingmuy.muyapiclientsdk.model.User.class);
+        // TODO： 测试接口改为根据测试地址调用
+        String result = apiClient.getUsernameByPost(user);
         return ResultUtils.success(result);
     }
 
