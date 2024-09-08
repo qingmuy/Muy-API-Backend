@@ -12,6 +12,7 @@ import com.qingmuy.exception.ThrowUtils;
 import com.qingmuy.model.dto.user.*;
 import com.qingmuy.model.entity.User;
 import com.qingmuy.model.vo.LoginUserVO;
+import com.qingmuy.model.vo.UserAKSKVO;
 import com.qingmuy.model.vo.UserVO;
 import com.qingmuy.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +38,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    //TODO ： 用户更换ak sk
-
 
     /**
      * 用户注册
@@ -274,4 +272,15 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+    /**
+     * 用户获取新AccessKey和SecretKey
+     */
+    @PostMapping("/changeaksk")
+    public BaseResponse<UserAKSKVO> getNewAccessKeyAndSecretKey(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        UserAKSKVO result = userService.getNewAccessKeyAndSecretKey(loginUser);
+        return ResultUtils.success(result);
+    }
+
 }

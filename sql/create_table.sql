@@ -39,6 +39,20 @@ create table if not exists interface_info
     isDelete       tinyint  default 0                 not null comment '是否删除'
 ) comment '接口信息';
 
+-- 用户调用接口关系表
+create table if not exists user_interface_info
+(
+    id              bigint                             not null auto_increment primary key comment 'id',
+    userId          bigint                             not null comment '调用用户id',
+    interfaceInfoId bigint                             not null comment '接口id',
+    totalNum        int      default 0                 not null comment '总调用次数',
+    leftNum         int      default 0                 not null comment '剩余调用次数',
+    status          int      default 0                 not null comment '0-关闭，1-禁用',
+    createTime      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete        tinyint  default 0                 not null comment '是否删除'
+) comment '用户调用接口关系';
+
 insert into api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `responseHeader`, `status`, `method`,
                                   `createUser`)
 values ('孙烨磊', 'cSOk', 'www.kamilah-heaney.net', '黄思聪', '郭昊强', '0', '谭瑞霖', 6574);

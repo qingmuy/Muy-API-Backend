@@ -14,6 +14,7 @@ import com.qingmuy.model.dto.user.UserQueryRequest;
 import com.qingmuy.model.entity.User;
 import com.qingmuy.model.enums.UserRoleEnum;
 import com.qingmuy.model.vo.LoginUserVO;
+import com.qingmuy.model.vo.UserAKSKVO;
 import com.qingmuy.model.vo.UserVO;
 import com.qingmuy.service.UserService;
 import com.qingmuy.utils.SqlUtils;
@@ -241,5 +242,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    /**
+     * 用户获取新AccessKey和SecretKey
+     * @param loginUser 当前登录用户
+     * @return 新的AKSK
+     */
+    @Override
+    public UserAKSKVO getNewAccessKeyAndSecretKey(User loginUser) {
+        String userAccount = loginUser.getUserAccount();
+        String accessKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(5));
+        String secretKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(8));
+        loginUser.setAccessKey(accessKey);
+        loginUser.setSecretKey(secretKey);
+        updateById(loginUser);
+        UserAKSKVO userAKSKVO = new UserAKSKVO(accessKey, secretKey);
+        return userAKSKVO;
     }
 }

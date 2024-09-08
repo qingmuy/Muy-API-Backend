@@ -1,10 +1,13 @@
 package com.qingmuy.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.qingmuy.annotation.AuthCheck;
 import com.qingmuy.common.*;
+import com.qingmuy.constant.CommonConstant;
+import com.qingmuy.constant.UserConstant;
 import com.qingmuy.exception.BusinessException;
 import com.qingmuy.exception.ThrowUtils;
 import com.qingmuy.model.dto.interfaceinfo.InterfaceInfoAddRequest;
@@ -20,6 +23,7 @@ import com.qingmuy.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -46,22 +50,28 @@ public class InterfaceInfoController {
      */
     @ApiOperation(value = "添加")
     @PostMapping("/add")
-    @AuthCheck
-    public BaseResponse<String> addInterface(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Long> addInterface(@RequestBody InterfaceInfoAddRequest interfaceInfoAddRequest, HttpServletRequest request) {
         if (interfaceInfoAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         BeanUtil.copyProperties(interfaceInfoAddRequest, interfaceInfo);
+        // 校验
+        interfaceInfoService.validInterfaceInfo(interfaceInfo, true);
         User loginUser = userService.getLoginUser(request);
         interfaceInfo.setCreateUser(loginUser.getId());
-        interfaceInfoService.save(interfaceInfo);
-        return ResultUtils.success("添加成功");
+        boolean result = interfaceInfoService.save(interfaceInfo);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        Long newInterfaceInfoId = interfaceInfo.getId();
+        return ResultUtils.success(newInterfaceInfoId);
     }
 
     @ApiOperation(value = "根据id查询")
     @GetMapping("/get/{id}")
-    @AuthCheck
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<InterfaceInfo> getInterfaceById(@PathVariable("id") Long id) {
         InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
         if (interfaceInfo == null) {
@@ -79,7 +89,7 @@ public class InterfaceInfoController {
      */
     @ApiOperation(value = "更新")
     @PostMapping("/update")
-    @AuthCheck
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<String> updateInterface(@RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest,
                                                 HttpServletRequest request) {
         if (interfaceInfoUpdateRequest == null) {
@@ -97,14 +107,37 @@ public class InterfaceInfoController {
         return ResultUtils.success("修改成功");
     }
 
+    /**
+     * 分页查询接口信息
+     *
+     * @param queryRequest
+     * @return
+     */
     @ApiOperation(value = "查询")
-    @PostMapping("/list")
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<InterfaceInfo>> listInterface(@RequestBody InterfaceInfoQueryRequest queryRequest) {
-        // 逻辑处理
+        if (queryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        BeanUtils.copyProperties(queryRequest, interfaceInfo);
         long current = queryRequest.getCurrent();
         long size = queryRequest.getPageSize();
-        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size),
-                interfaceInfoService.getQueryWrapper(queryRequest));
+        String sortField = queryRequest.getSortField();
+        String sortOrder = queryRequest.getSortOrder();
+        String description = interfaceInfo.getDescription();
+        // description需支持模糊搜索
+        interfaceInfo.setDescription(null);
+        // 限制爬虫
+        if (size > 50) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfo);
+        queryWrapper.like(StringUtils.isNotBlank(description), "description", description);
+        queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
+        Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
         return ResultUtils.success(interfaceInfoPage);
     }
 
@@ -115,7 +148,7 @@ public class InterfaceInfoController {
      */
     @ApiOperation(value = "删除")
     @PostMapping("/delete")
-    @AuthCheck
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<String> deleteInterface(@RequestBody DeleteRequest deleteRequest) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -134,7 +167,7 @@ public class InterfaceInfoController {
      * @return 上线结果
      */
     @PostMapping("/online")
-    @AuthCheck(mustRole = "admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> onlineInterface(@RequestBody IdRequest idRequest,
                                                 HttpServletRequest request) {
         // 判断请求信息是否合法
@@ -171,7 +204,7 @@ public class InterfaceInfoController {
      * @return
      */
     @PostMapping("/offline")
-    @AuthCheck(mustRole = "admin")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> offlineInterface(@RequestBody IdRequest idRequest,
                                                 HttpServletRequest request) {
         // 判断请求信息是否合法

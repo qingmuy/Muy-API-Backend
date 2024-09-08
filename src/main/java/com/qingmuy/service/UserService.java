@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qingmuy.model.dto.user.UserQueryRequest;
 import com.qingmuy.model.entity.User;
 import com.qingmuy.model.vo.LoginUserVO;
+import com.qingmuy.model.vo.UserAKSKVO;
 import com.qingmuy.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -106,4 +107,10 @@ public interface UserService extends IService<User> {
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     * 用户获取新AccessKey和SecretKey
+     * @param loginUser 当前登录用户
+     * @return 新的AKSK
+     */
+    UserAKSKVO getNewAccessKeyAndSecretKey(User loginUser);
 }
