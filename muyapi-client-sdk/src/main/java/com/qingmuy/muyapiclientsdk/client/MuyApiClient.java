@@ -14,6 +14,8 @@ import static com.qingmuy.muyapiclientsdk.utils.SignUtils.genSign;
 
 public class MuyApiClient {
 
+    public static final String GATEWAY_HOST = "http://localhost:8090";
+
     private String accessKey;
 
     private String secretKey;
@@ -27,7 +29,7 @@ public class MuyApiClient {
         // 可以单独传入http擦书，这样参数会自动做URL编码，拼接在URL上
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("name", name);
-        String result = HttpUtil.get("http://localhost:8123/api/name/", paramMap);
+        String result = HttpUtil.get(GATEWAY_HOST + "/api/name/", paramMap);
         System.out.println("result = " + result);
         return result;
     }
@@ -35,14 +37,14 @@ public class MuyApiClient {
     public String getNameByPost(String name) {
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("name", name);
-        String result = HttpUtil.post("http://localhost:8123/api/name/", paramMap);
+        String result = HttpUtil.post(GATEWAY_HOST + "/api/name/", paramMap);
         System.out.println("result = " + result);
         return result;
     }
 
     public String getUsernameByPost(User user) {
         String json = JSONUtil.toJsonStr(user);
-        HttpResponse httpResponse = HttpRequest.post("http://localhost:8123/api/name/user")
+        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
                 .addHeaders(getHeaderMap(json))
                 .body(json)
                 .execute();
