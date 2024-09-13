@@ -63,3 +63,21 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.qingmuy.controller
+dubbo:
+  application:
+    # 应用名称
+    name: order-provider
+  scan:
+    # 接口实现者（服务实现）包
+    base-packages: com.qingmuy.provider
+  # 注册中心信息
+  registry:
+    address: zookeeper://127.0.0.1:2181
+    timeout: 10000
+  protocol:
+    # 协议名称
+    name: dubbo
+    # 协议端口
+    port: 20880
+  config-center:
+    timeout: 10000
