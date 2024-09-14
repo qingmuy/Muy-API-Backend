@@ -10,6 +10,12 @@ spring:
           uri: http://localhost:8123
           predicates:
             - Path=/api/**
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/api
+    username: root
+    password: 114514
 # dubbo 相关配置
 dubbo:
   application:

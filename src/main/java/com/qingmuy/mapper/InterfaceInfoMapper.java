@@ -1,7 +1,7 @@
 package com.qingmuy.mapper;
 
-import com.qingmuy.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qingmuy.model.entity.InterfaceInfo;
 
 /**
 * @author Muy
