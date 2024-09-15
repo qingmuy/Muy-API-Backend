@@ -34,6 +34,8 @@ import java.util.List;
 @Component
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
+    public static final String INTERFACE_HOST = "http://localhost:8123";
+
     @DubboReference
     private InnerUserService innerUserService;
 
@@ -49,7 +51,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 请求日志
         ServerHttpRequest request = exchange.getRequest();
-        String path = request.getPath().value();
+        String path = INTERFACE_HOST + request.getPath().value();
         String method = request.getMethod().toString();
         log.info("请求唯一标识：" + request.getId());
         log.info("请求路径：" + path);
@@ -106,10 +108,12 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return handleNoAuth(response);
         }
 
+        // TODO：是否有校验次数
 
         // 5. 请求转发，调用模拟接口
-        Mono<Void> filter = chain.filter(exchange);
-        log.info("响应：" + response.getStatusCode());
+        //Mono<Void> filter = chain.filter(exchange);
+        //log.info("响应：" + response.getStatusCode());
+
 
         // 6. 响应日志
         return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
