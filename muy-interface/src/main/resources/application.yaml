@@ -6,3 +6,4 @@ muy:
   client:
     access-key: dingzhen
     secret-key: zhenzhu
+    source-key: sourceKeyInDingzhen

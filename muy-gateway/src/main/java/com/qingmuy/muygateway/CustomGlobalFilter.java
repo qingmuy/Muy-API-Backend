@@ -114,9 +114,17 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         //Mono<Void> filter = chain.filter(exchange);
         //log.info("响应：" + response.getStatusCode());
 
+        // 5. 流量染色
+        // 通过requestBuilder对请求头做处理 查询对应接口的来源校验码SourceKey
+        ServerHttpRequest.Builder requestBuilder = request.mutate();
+        requestBuilder.header("source", interfaceInfo.getSourceKey());
+        // 构建新的请求对象request
+        ServerHttpRequest newRequest = requestBuilder.build();
+        // 设置新的请求对象
+        ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
 
         // 6. 响应日志
-        return handleResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());
+        return handleResponse(newExchange, chain, interfaceInfo.getId(), invokeUser.getId());
     }
 
     /**

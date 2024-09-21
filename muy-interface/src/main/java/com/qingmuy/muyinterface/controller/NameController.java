@@ -1,14 +1,22 @@
 package com.qingmuy.muyinterface.controller;
 
 
+import com.qingmuy.muyapiclientsdk.annotation.SourceCheck;
 import com.qingmuy.muyapiclientsdk.model.User;
+import com.qingmuy.muyinterface.service.NameService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/name")
+@Slf4j
 public class NameController {
+
+    @Resource
+    NameService nameService;
 
     @GetMapping("/get")
     public String getNameByGet(String name) {
@@ -21,6 +29,7 @@ public class NameController {
     }
 
     @PostMapping("/user")
+    @SourceCheck
     public String getUsernameByPost(@RequestBody User user, HttpServletRequest request) {
 /*        String accessKey = request.getHeader("accessKey");
         String nonce = request.getHeader("nonce");
@@ -39,6 +48,8 @@ public class NameController {
         if (!sign.equals(serverSign)) {
             throw new RuntimeException("无权限");
         }*/
+        log.info(request.getHeader("source"));
+
         return "POST 用户名字是" + user.getUsername();
     }
 }

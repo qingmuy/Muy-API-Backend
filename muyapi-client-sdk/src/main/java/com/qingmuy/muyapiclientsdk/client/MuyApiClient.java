@@ -54,6 +54,11 @@ public class MuyApiClient {
         return result;
     }
 
+    /**
+     * 添加请求头
+     * @param body
+     * @return
+     */
     private Map<String, String> getHeaderMap(String body) {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("accessKey", accessKey);

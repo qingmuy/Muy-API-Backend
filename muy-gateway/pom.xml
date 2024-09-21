@@ -61,8 +61,13 @@
             <groupId>com.qingmuy</groupId>
             <artifactId>muyapi-client-sdk</artifactId>
             <version>0.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
         <!-- Dubbo -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>

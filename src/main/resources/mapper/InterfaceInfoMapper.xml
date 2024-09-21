@@ -20,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,description,
+        id,name,description,sourceKey,
         url,requestHeader,responseHeader,
         status,method,createUser,
         createTime,updateTime,isDelete
